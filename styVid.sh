@@ -33,7 +33,7 @@ read -p "Maximum recommended resolution with a Titan X 12GB: 500,000 pixels \
 
 # Obtain FPS of input video
 fps=$(ffmpeg -i $1 2>&1 | sed -n "s/.*, \(.*\) fp.*/\1/p")
-outfps=10
+outfps=20
 # Save frames of the video as individual image files
 if [ -z $resolution ]; then
   $FFMPEG -i $1 -r ${fps} -vf fps=${outfps} videoprocessing/${filename}/frame_%04d.ppm  
