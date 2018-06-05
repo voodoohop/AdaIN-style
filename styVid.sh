@@ -33,13 +33,13 @@ read -p "Maximum recommended resolution with a Titan X 12GB: 500,000 pixels \
 
 # Obtain FPS of input video
 fps=$(ffmpeg -i $1 2>&1 | sed -n "s/.*, \(.*\) fp.*/\1/p")
-
+outfps=10
 # Save frames of the video as individual image files
 if [ -z $resolution ]; then
-  $FFMPEG -i $1 -r ${fps} videoprocessing/${filename}/frame_%04d.ppm
+  $FFMPEG -i $1 -r ${fps} -vf fps=${outfps} videoprocessing/${filename}/frame_%04d.ppm  
   resolution=default
 else
-  $FFMPEG -i $1 -vf scale=$resolution -r ${fps} videoprocessing/${filename}/frame_%04d.ppm
+  $FFMPEG -i $1 -vf scale=$resolution -r ${fps} -vf fps=${outfps} videoprocessing/${filename}/frame_%04d.ppm
 fi
 
 echo ""
@@ -50,7 +50,7 @@ do
   stylename=$(basename "${styleimage}")
   stylename="${stylename%.*}"
   stylename=${stylename//[%]/x}
-  th testVid.lua -contentDir videoprocessing/${filename} -style ${styleimage} -outputDir videoprocessing/${filename}-${stylename}
+  th testVid.lua -gpu -1  -contentDir videoprocessing/${filename} -style ${styleimage} -outputDir videoprocessing/${filename}-${stylename}
 
   # Generate video from output images.
   $FFMPEG -i videoprocessing/${filename}-${stylename}/frame_%04d_stylized_${stylename}.jpg -pix_fmt yuv420p -r ${fps} videos/${filename}/${filename}-stylized-${stylename}.$extension
@@ -58,4 +58,6 @@ done
 
 # Also synthesize back the original video. 
 # Sometimes there can be a difference of about 1 second
-$FFMPEG -i videoprocessing/${filename}/frame_%04d.ppm -pix_fmt yuv420p -r ${fps} videos/${filename}/${filename}-fix.$extension
+
+
+$FFMPEG -i videoprocessing/${filename}/frame_%04d.ppm -pix_fmt yuv420p -r ${outfps} videos/${filename}/${filename}-fix.$extension
