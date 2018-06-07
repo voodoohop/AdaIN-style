@@ -50,7 +50,7 @@ do
   stylename=$(basename "${styleimage}")
   stylename="${stylename%.*}"
   stylename=${stylename//[%]/x}
-  th testVid.lua -gpu -1  -contentDir videoprocessing/${filename} -style ${styleimage} -outputDir videoprocessing/${filename}-${stylename}
+  th testVid.lua -gpu -1  -contentDir videoprocessing/${filename} -style "${styleimage}" -outputDir videoprocessing/${filename}-${stylename}
 
   # Generate video from output images.
   $FFMPEG -i videoprocessing/${filename}-${stylename}/frame_%04d_stylized_${stylename}.jpg -pix_fmt yuv420p -r ${fps} videos/${filename}/${filename}-stylized-${stylename}.$extension

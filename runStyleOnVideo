@@ -1,0 +1,2 @@
+#!/bin/bash
+./styVid.sh "$1" ./input/style
